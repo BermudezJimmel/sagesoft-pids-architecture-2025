@@ -79,7 +79,7 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 - ✅ Dedicated EC2 per application (PIDS, PJD, SERPP, HEFP)
 - ✅ Right-sized instances per workload
 - ✅ Independent auto-scaling groups
-- ✅ Separate target groups per instance
+- ✅ Host-based routing per subdomain
 - ✅ EFS mounted on all EC2 instances (/mnt/sessions)
 - ✅ Shared session storage for seamless scaling
 - ✅ Fault isolation and independent deployments
@@ -95,6 +95,7 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 - Independent scaling per service
 - Maximum fault isolation
 - Session persistence across scaling events
+- Intelligent subdomain routing
 - Independent deployment cycles
 - Service-specific optimizations
 

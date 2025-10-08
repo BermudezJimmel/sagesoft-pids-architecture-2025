@@ -50,7 +50,7 @@ This microservices architecture separates each application into its own dedicate
                       │
 ┌─────────────────────▼───────────────────────────────────────────┐
 │              Application Load Balancer                          │
-│                 (Simple Default Routing)                        │
+│                 (Host-based Routing)                            │
 └─────┬─────────┬─────────┬─────────┬─────────────────────────────┘
       │         │         │         │
 ┌─────▼───┐ ┌───▼───┐ ┌───▼───┐ ┌───▼───┐
@@ -107,7 +107,7 @@ This microservices architecture separates each application into its own dedicate
 
 ## Application Load Balancer Configuration
 
-### Simple Default Routing (Implemented)
+### Host-Based Routing (Implemented)
 
 ```yaml
 # Separate Target Groups per EC2 Instance
@@ -128,9 +128,11 @@ Target Groups:
       targets: [EC2: PIDS-HEFP]
       health_check: /health
 
-Default Rule:
-  - Forward to: All target groups (round-robin)
-  - Each instance handles its specific application
+Host-Based Routing Rules:
+  - Host Header: pids.gov.ph → pids-main-tg
+  - Host Header: pjd.pids.gov.ph → pids-pjd-tg
+  - Host Header: serpp.pids.gov.ph → pids-serpp-tg
+  - Host Header: hefp.pids.gov.ph → pids-hefp-tg
 ```
 
 ### Application Configuration (Per Instance)
@@ -402,13 +404,16 @@ s3fs#pids-hefp-files /mnt/hefp-files fuse _netdev,allow_other,iam_role=auto 0 0
 - **Resource Optimization**: Right-sized instances per workload
 - **Development Team Isolation**: Teams can work independently
 - **Session Persistence**: EFS ensures sessions survive scaling events
-- **Load Balancer Flexibility**: No sticky sessions required
+- **Intelligent Routing**: Host-based routing directs traffic to correct service
+- **Service Isolation**: Each subdomain routes to dedicated instance
 
 ### Operational Benefits
 - **Monitoring Granularity**: Per-service metrics and alerts
 - **Security Isolation**: Separate security groups per service
 - **Maintenance Windows**: Independent maintenance schedules
 - **Performance Tuning**: Service-specific optimizations
+- **Traffic Analysis**: Per-subdomain traffic insights
+- **Targeted Scaling**: Scale only the services that need it
 
 ## High Availability Features
 
