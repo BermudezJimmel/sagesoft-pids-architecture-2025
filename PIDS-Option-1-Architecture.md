@@ -17,8 +17,8 @@ This optimized architecture introduces S3 storage integration, automated backup 
 
 | Database Name | Instance Type | Engine Version | Storage (GB) | Monitoring | Backup |
 |---------------|---------------|----------------|--------------|------------|---------|
-| RDS: pids     | db.m5.xlarge  | MySQL 8.0.33   | 200          | CloudWatch Alarms | RDS Automated Backup |
-| RDS: serpp    | db.m5.xlarge  | MySQL 8.0.42   | 200          | CloudWatch Alarms | RDS Automated Backup |
+| RDS: pids     | db.m5.large   | MySQL 8.0.33   | 200          | CloudWatch Alarms | RDS Automated Backup |
+| RDS: serpp    | db.m5.large   | MySQL 8.0.42   | 200          | CloudWatch Alarms | RDS Automated Backup |
 
 ### Storage Architecture (S3)
 
@@ -70,7 +70,7 @@ This optimized architecture introduces S3 storage integration, automated backup 
         │                           │
 ┌───────▼────────┐         ┌────────▼────────┐
 │  RDS: pids     │         │  RDS: serpp     │
-│  db.m5.xlarge  │         │  db.m5.xlarge   │
+│  db.m5.large   │         │  db.m5.large    │
 │  MySQL 8.0.33  │         │  MySQL 8.0.42   │
 │  200GB         │         │  200GB          │
 │  + Alarms      │         │  + Alarms       │
@@ -108,21 +108,21 @@ Standard → Standard-IA (30 days) → Glacier Flexible Retrieval (90 days)
 
 ### CloudWatch Alarms Configuration
 
-#### PIDS Database (db.m5.xlarge)
+#### PIDS Database (db.m5.large)
 | Metric | Threshold | Action |
 |--------|-----------|--------|
-| CPU Utilization | > 80% for 5 minutes | SNS Alert + Auto-scaling consideration |
-| Database Connections | > 80% of max | SNS Alert |
+| CPU Utilization | > 75% for 5 minutes | SNS Alert + Auto-scaling consideration |
+| Database Connections | > 75% of max | SNS Alert |
 | Free Storage Space | < 20GB | SNS Alert + Storage expansion |
-| Read/Write Latency | > 200ms | SNS Alert |
+| Read/Write Latency | > 250ms | SNS Alert |
 
-#### SERPP Database (db.m5.xlarge)
+#### SERPP Database (db.m5.large)
 | Metric | Threshold | Action |
 |--------|-----------|--------|
-| CPU Utilization | > 80% for 5 minutes | SNS Alert |
-| Database Connections | > 80% of max | SNS Alert |
+| CPU Utilization | > 75% for 5 minutes | SNS Alert |
+| Database Connections | > 75% of max | SNS Alert |
 | Free Storage Space | < 20GB | SNS Alert |
-| Read/Write Latency | > 200ms | SNS Alert |
+| Read/Write Latency | > 250ms | SNS Alert |
 
 ## Backup Strategy
 

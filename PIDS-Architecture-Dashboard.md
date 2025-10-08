@@ -47,8 +47,8 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 
 ### [Option-2: Monolith Consolidation](./PIDS-Option-2-Architecture.md)
 **Focus**: Cost optimization through infrastructure consolidation  
-**Infrastructure**: 1x c5.2xlarge EC2 + 1x db.m5.2xlarge RDS + S3 Integration  
-**Cost Impact**: 35-45% total infrastructure cost reduction  
+**Infrastructure**: 1x c5.2xlarge EC2 + 1x db.m5.large RDS + S3 Integration  
+**Cost Impact**: 45-55% total infrastructure cost reduction  
 
 **Key Features**:
 - ✅ Single EC2 instance (8 vCPUs, 16GB RAM)
@@ -72,8 +72,8 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 
 ### [Option-3: Microservices with Dedicated Instances](./PIDS-Option-3-Architecture.md)
 **Focus**: Maximum scalability and fault isolation  
-**Infrastructure**: 4x EC2 instances + 2x db.m5.xlarge RDS + S3 Integration + EFS  
-**Cost Impact**: +20-25% increase for enhanced capabilities  
+**Infrastructure**: 4x EC2 instances + 2x db.m5.large RDS + S3 Integration + EFS  
+**Cost Impact**: +5-10% increase for enhanced capabilities  
 
 **Key Features**:
 - ✅ Dedicated EC2 per application (PIDS, PJD, SERPP, HEFP)
@@ -105,13 +105,13 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 | Feature | Current | Option-1 | Option-2 | Option-3 |
 |---------|---------|----------|----------|----------|
 | **EC2 Instances** | 2x t3a.xlarge | 2x t3a.xlarge | 1x c5.2xlarge | 4x mixed sizes |
-| **RDS Databases** | 2x db.m5.xlarge | 2x db.m5.xlarge | 1x db.m5.2xlarge | 2x db.m5.xlarge |
+| **RDS Databases** | 2x db.m5.xlarge | 2x db.m5.large | 1x db.m5.large | 2x db.m5.large |
 | **S3 Integration** | ❌ | ✅ | ✅ | ✅ |
 | **EFS Integration** | ❌ | ❌ | ❌ | ✅ |
 | **Auto Scaling** | ❌ | ❌ | Limited | ✅ Full |
 | **Session Persistence** | Limited | Limited | Limited | ✅ EFS |
 | **Fault Isolation** | Medium | Medium | Low | High |
-| **Cost Change** | Baseline | Storage -30% | Total -35% | Total +20% |
+| **Cost Change** | Baseline | Storage -30% | Total -45% | Total +5% |
 | **Complexity** | Low | Medium | Low | High |
 | **Scalability** | Limited | Limited | Medium | High |
 
@@ -121,7 +121,7 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 
 ### **For Cost Optimization**: Choose Option-2
 - Best for budget-conscious approach
-- 35-45% cost reduction
+- 45-55% cost reduction
 - Suitable for current traffic patterns
 - Simplified management
 
@@ -133,6 +133,7 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 
 ### **For Future Growth**: Choose Option-3
 - Maximum scalability and flexibility
+- Only +5-10% cost increase
 - Independent service scaling
 - Best for growing traffic demands
 - Supports microservices architecture

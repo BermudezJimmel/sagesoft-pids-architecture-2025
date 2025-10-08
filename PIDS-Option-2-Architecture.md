@@ -16,7 +16,7 @@ This consolidated architecture combines all applications into a single EC2 insta
 
 | Database Name | Instance Type | Engine Version | Storage (GB) | Monitoring | Backup |
 |---------------|---------------|----------------|--------------|------------|---------|
-| RDS: pids-unified | db.m5.2xlarge | MySQL 8.0.42 | 400 | CloudWatch Alarms | RDS Automated Backup |
+| RDS: pids-unified | db.m5.large | MySQL 8.0.42 | 400 | CloudWatch Alarms | RDS Automated Backup |
 
 ### Storage Architecture (S3)
 
@@ -71,7 +71,7 @@ This consolidated architecture combines all applications into a single EC2 insta
                                │
 ┌──────────────────────────────▼──────────────────────────────────┐
 │                  RDS: pids-unified                              │
-│                  db.m5.2xlarge                                  │
+│                  db.m5.large                                    │
 │                  MySQL 8.0.42                                   │
 │                  400GB Storage                                   │
 │   ┌─────────────────────────────────────────────────────────┐   │
@@ -162,14 +162,14 @@ CREATE SCHEMA shared;       -- Shared resources (users, sessions, etc.)
 
 ### CloudWatch Alarms Configuration
 
-#### Unified Database (db.m5.2xlarge)
+#### Unified Database (db.m5.large)
 | Metric | Threshold | Action |
 |--------|-----------|--------|
-| CPU Utilization | > 75% for 5 minutes | SNS Alert + Scale consideration |
-| Database Connections | > 75% of max | SNS Alert |
+| CPU Utilization | > 70% for 5 minutes | SNS Alert + Scale consideration |
+| Database Connections | > 70% of max | SNS Alert |
 | Free Storage Space | < 40GB | SNS Alert + Storage expansion |
-| Read/Write Latency | > 250ms | SNS Alert |
-| Memory Utilization | > 80% | SNS Alert |
+| Read/Write Latency | > 300ms | SNS Alert |
+| Memory Utilization | > 75% | SNS Alert |
 
 ### Application-Level Monitoring
 | Metric | Threshold | Action |
@@ -229,11 +229,11 @@ Standard → Standard-IA (30 days) → Glacier Instant Retrieval (90 days) → G
 | Component | Current (2 instances) | Option-2 (Monolith) | Savings |
 |-----------|----------------------|---------------------|---------|
 | EC2 | 2x t3a.xlarge | 1x c5.2xlarge | ~30% |
-| RDS | 2x db.m5.xlarge | 1x db.m5.2xlarge | ~40% |
+| RDS | 2x db.m5.xlarge | 1x db.m5.large | ~60% |
 | Storage | 400GB total | 400GB unified | 0% |
 | Data Transfer | Separate | Consolidated | ~20% |
 
-### Total Estimated Savings: 35-45%
+### Total Estimated Savings: 45-55%
 
 ## Performance Considerations
 

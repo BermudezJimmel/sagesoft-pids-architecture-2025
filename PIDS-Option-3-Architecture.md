@@ -19,8 +19,8 @@ This microservices architecture separates each application into its own dedicate
 
 | Database Name | Instance Type | Engine Version | Storage (GB) | Monitoring | Backup |
 |---------------|---------------|----------------|--------------|------------|---------|
-| RDS: pids | db.m5.xlarge | MySQL 8.0.33 | 200 | CloudWatch Alarms | RDS Automated Backup |
-| RDS: serpp | db.m5.xlarge | MySQL 8.0.42 | 200 | CloudWatch Alarms | RDS Automated Backup |
+| RDS: pids | db.m5.large | MySQL 8.0.33 | 200 | CloudWatch Alarms | RDS Automated Backup |
+| RDS: serpp | db.m5.large | MySQL 8.0.42 | 200 | CloudWatch Alarms | RDS Automated Backup |
 
 ### Storage Architecture (S3 + EFS)
 
@@ -81,7 +81,7 @@ This microservices architecture separates each application into its own dedicate
         ┌───────▼───┐ ┌───▼───────┐
         │RDS: pids  │ │RDS: serpp │
         │db.m5.     │ │db.m5.     │
-        │xlarge     │ │xlarge     │
+        │large      │ │large      │
         │MySQL 8.0.33│ │MySQL 8.0.42│
         │200GB      │ │200GB      │
         │+ Alarms   │ │+ Alarms   │
@@ -224,21 +224,21 @@ Auto Scaling Groups: pids-serpp-asg, pids-hefp-asg
 
 ### CloudWatch Alarms Configuration
 
-#### PIDS Database (db.m5.xlarge)
+#### PIDS Database (db.m5.large)
 | Metric | Threshold | Action |
 |--------|-----------|--------|
-| CPU Utilization | > 80% for 5 minutes | SNS Alert + Scale consideration |
-| Database Connections | > 80% of max | SNS Alert |
+| CPU Utilization | > 75% for 5 minutes | SNS Alert + Scale consideration |
+| Database Connections | > 75% of max | SNS Alert |
 | Free Storage Space | < 20GB | SNS Alert + Storage expansion |
-| Read/Write Latency | > 200ms | SNS Alert |
+| Read/Write Latency | > 250ms | SNS Alert |
 
-#### SERPP Database (db.m5.xlarge)
+#### SERPP Database (db.m5.large)
 | Metric | Threshold | Action |
 |--------|-----------|--------|
-| CPU Utilization | > 80% for 5 minutes | SNS Alert |
-| Database Connections | > 80% of max | SNS Alert |
+| CPU Utilization | > 75% for 5 minutes | SNS Alert |
+| Database Connections | > 75% of max | SNS Alert |
 | Free Storage Space | < 20GB | SNS Alert |
-| Read/Write Latency | > 200ms | SNS Alert |
+| Read/Write Latency | > 250ms | SNS Alert |
 
 ## Backup Strategy
 
@@ -384,13 +384,13 @@ s3fs#pids-hefp-files /mnt/hefp-files fuse _netdev,allow_other,iam_role=auto 0 0
 | Component | Current (2 instances) | Option-3 (4 instances) | Change |
 |-----------|----------------------|------------------------|--------|
 | EC2 | 2x t3a.xlarge | 1x t3a.xlarge + 1x t3a.medium + 2x t3a.small | +15% |
-| RDS | 2x db.m5.xlarge | 2x db.m5.xlarge | 0% |
+| RDS | 2x db.m5.xlarge | 2x db.m5.large | -25% |
 | Storage | 400GB total | 400GB distributed | 0% |
 | EFS | None | 1x EFS (100 MiB/s provisioned) | +5% |
 | Load Balancer | 1x ALB | 1x ALB (simple routing) | 0% |
 | Auto Scaling | None | 4x ASG | +10% |
 
-### Total Estimated Cost Change: +20-25%
+### Total Estimated Cost Change: +5-10%
 
 ## Microservices Benefits
 
