@@ -80,7 +80,8 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 - ✅ Right-sized instances per workload
 - ✅ Independent auto-scaling groups
 - ✅ Separate target groups per instance
-- ✅ EFS for shared session storage (ASG support)
+- ✅ EFS mounted on all EC2 instances (/mnt/sessions)
+- ✅ Shared session storage for seamless scaling
 - ✅ Fault isolation and independent deployments
 - ✅ Service-specific monitoring
 
@@ -167,6 +168,7 @@ This dashboard provides a comprehensive overview of all PIDS (Philippine Institu
 
 ### Phase 2: Infrastructure Setup (Week 3-4)
 - Deploy selected architecture components
+- Create EFS file system and mount on all EC2 instances
 - Configure S3 buckets and intelligent tiering
 - Set up monitoring and alerting
 - Configure backup strategies

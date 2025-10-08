@@ -8,12 +8,12 @@ This microservices architecture separates each application into its own dedicate
 
 ### Compute Resources (EC2 Instances)
 
-| Server Name | Instance Type | CPU Cores | RAM (GB) | Operating System | Application Hosted | S3 Mount Point |
-|-------------|---------------|-----------|----------|------------------|-------------------|----------------|
-| EC2: PIDS-MAIN | t3a.xlarge | 4 | 16 | Ubuntu 24.04 | PIDS (Main) - YII Framework | /mnt/pids-files |
-| EC2: PIDS-PJD | t3a.medium | 2 | 4 | Ubuntu 24.04 | PJD (Subdomain) - YII Framework | /mnt/pjd-files |
-| EC2: PIDS-SERPP | t3a.small | 2 | 2 | Ubuntu 24.04 | SERPP (Subdomain) - YII Framework | /mnt/serpp-files |
-| EC2: PIDS-HEFP | t3a.small | 2 | 2 | Ubuntu 24.04 | HEFP (Subdomain) - YII Framework + Power BI | /mnt/hefp-files |
+| Server Name | Instance Type | CPU Cores | RAM (GB) | Operating System | Application Hosted | S3 Mount Point | EFS Mount Point |
+|-------------|---------------|-----------|----------|------------------|-------------------|----------------|-----------------|
+| EC2: PIDS-MAIN | t3a.xlarge | 4 | 16 | Ubuntu 24.04 | PIDS (Main) - YII Framework | /mnt/pids-files | /mnt/sessions |
+| EC2: PIDS-PJD | t3a.medium | 2 | 4 | Ubuntu 24.04 | PJD (Subdomain) - YII Framework | /mnt/pjd-files | /mnt/sessions |
+| EC2: PIDS-SERPP | t3a.small | 2 | 2 | Ubuntu 24.04 | SERPP (Subdomain) - YII Framework | /mnt/serpp-files | /mnt/sessions |
+| EC2: PIDS-HEFP | t3a.small | 2 | 2 | Ubuntu 24.04 | HEFP (Subdomain) - YII Framework + Power BI | /mnt/hefp-files | /mnt/sessions |
 
 ### Database Resources (RDS) - Existing Setup
 
@@ -311,6 +311,24 @@ Mount Targets:
 ```bash
 # /etc/fstab entries for all EC2 instances
 pids-sessions-efs.efs.region.amazonaws.com:/ /mnt/sessions efs defaults,_netdev,tls 0 0
+
+# Mount commands for immediate mounting
+sudo mkdir -p /mnt/sessions
+sudo mount -t efs pids-sessions-efs.efs.region.amazonaws.com:/ /mnt/sessions
+
+# Set proper permissions for web applications
+sudo chown -R www-data:www-data /mnt/sessions
+sudo chmod 755 /mnt/sessions
+```
+
+#### Installation Requirements (All EC2 Instances)
+```bash
+# Install EFS utilities on Ubuntu 24.04
+sudo apt-get update
+sudo apt-get install -y amazon-efs-utils
+
+# Alternative using NFS client
+sudo apt-get install -y nfs-common
 ```
 
 #### YII Framework Session Configuration
@@ -410,28 +428,34 @@ s3fs#pids-hefp-files /mnt/hefp-files fuse _netdev,allow_other,iam_role=auto 0 0
 
 ### Phase 1: Infrastructure Setup (Week 1)
 1. Launch 4 new EC2 instances with auto-scaling groups
-2. Configure ALB with path-based routing
-3. Set up S3 buckets with intelligent tiering
-4. Configure CloudWatch monitoring and alarms
+2. Create EFS file system with mount targets in all AZs
+3. Configure ALB with separate target groups
+4. Set up S3 buckets with intelligent tiering
+5. Configure CloudWatch monitoring and alarms
 
 ### Phase 2: Application Migration (Week 2-3)
-1. Deploy PIDS Main to dedicated instance
-2. Deploy PJD to dedicated instance
-3. Deploy SERPP to dedicated instance
-4. Deploy HEFP to dedicated instance
-5. Configure database connections per service
+1. Install EFS utilities on all EC2 instances
+2. Mount EFS file system on all instances (/mnt/sessions)
+3. Deploy PIDS Main to dedicated instance
+4. Deploy PJD to dedicated instance
+5. Deploy SERPP to dedicated instance
+6. Deploy HEFP to dedicated instance
+7. Configure database connections per service
+8. Update YII Framework session configuration for EFS
 
 ### Phase 3: Data Migration (Week 4)
 1. Migrate files to respective S3 buckets
 2. Test S3FS mounts on all instances
-3. Configure backup cron jobs per instance
-4. Validate data integrity across services
+3. Test EFS session sharing across instances
+4. Configure backup cron jobs per instance
+5. Validate data integrity across services
 
 ### Phase 4: Testing and Cutover (Week 5)
-1. Load testing per service
-2. End-to-end integration testing
-3. Disaster recovery testing
-4. DNS cutover with gradual traffic shift
+1. Load testing per service with auto-scaling
+2. Session persistence testing during scaling events
+3. End-to-end integration testing
+4. Disaster recovery testing
+5. DNS cutover with gradual traffic shift
 
 ## Monitoring and Alerting
 
